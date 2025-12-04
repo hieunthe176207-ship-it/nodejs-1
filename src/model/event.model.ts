@@ -1,4 +1,3 @@
-// Event.model.ts (chỉnh lại 1 chút)
 import { Schema, model, Document, Types } from "mongoose";
 
 export type TicketTypeName = "VIP" | "NORMAL";
