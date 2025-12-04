@@ -1,18 +1,14 @@
-// Booking.model.ts
 import { Schema, model, Document, Types } from "mongoose";
-import { TicketTypeName } from "./event.model";
-export interface IBookingTicket {
-  seatType: TicketTypeName; // "VIP" | "NORMAL"
-  quantity: number;
-  unitPrice: number;
-}
 
 export interface IBooking extends Document {
   userId: Types.ObjectId;
   eventId: Types.ObjectId;
   status: "pending" | "paid" | "cancelled";
-  tickets: IBookingTicket[];
-  totalAmount: number;
+
+  quantity: number;     // số vé mua
+  unitPrice: number;    // giá 1 vé tại thời điểm mua
+  totalAmount: number;  // = quantity * unitPrice
+
   paymentMethod: "momo" | "credit_card" | "cash";
   createdAt: Date;
 }
@@ -26,23 +22,17 @@ const bookingSchema = new Schema<IBooking>(
       enum: ["pending", "paid", "cancelled"],
       default: "pending",
     },
-    tickets: [
-      {
-        seatType: {
-          type: String,
-          enum: ["VIP", "NORMAL"], // CHỈ VIP & NORMAL
-          required: true,
-        },
-        quantity: { type: Number, required: true },
-        unitPrice: { type: Number, required: true },
-      },
-    ],
+
+    quantity: { type: Number, required: true },
+    unitPrice: { type: Number, required: true },
     totalAmount: { type: Number, required: true },
+
     paymentMethod: {
       type: String,
       enum: ["momo", "credit_card", "cash"],
       required: true,
     },
+
     createdAt: { type: Date, default: Date.now },
   },
   {
@@ -51,6 +41,5 @@ const bookingSchema = new Schema<IBooking>(
   }
 );
 
- const Booking = model<IBooking>("Booking", bookingSchema);
-
+const Booking = model<IBooking>("Booking", bookingSchema);
 export default Booking;

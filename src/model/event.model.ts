@@ -1,20 +1,13 @@
 import { Schema, model, Document, Types } from "mongoose";
 
-export type TicketTypeName = "VIP" | "NORMAL";
-
 export interface IEvent extends Document {
   title: string;
   category: "concert" | "workshop" | "theater";
   organizerId: Types.ObjectId;
   startTime: Date;
   endTime: Date;
-  // bỏ price tổng quát, thay bằng ticketTypes
-  ticketTypes: {
-    type: TicketTypeName;
-    price: number;
-    totalTickets: number;
-    soldTickets: number;
-  }[];
+  price: number;      // giá 1 vé
+  quantity: number;   // tổng số vé (1 loại vé duy nhất)
   tags: string[];
   venue: {
     name: string;
@@ -35,21 +28,11 @@ const eventSchema = new Schema<IEvent>(
     },
     organizerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
 
-    startTime: Date,
-    endTime: Date,
+    startTime: { type: Date, required: true },
+    endTime: { type: Date, required: true },
 
-    ticketTypes: [
-      {
-        type: {
-          type: String,
-          enum: ["VIP", "NORMAL"],
-          required: true,
-        },
-        price: { type: Number, required: true },
-        totalTickets: { type: Number, required: true },
-        soldTickets: { type: Number, required: true },
-      },
-    ],
+    price: { type: Number, required: true },    // 1 loại vé
+    quantity: { type: Number, required: true }, // tổng số vé có thể bán
 
     tags: [String],
 
